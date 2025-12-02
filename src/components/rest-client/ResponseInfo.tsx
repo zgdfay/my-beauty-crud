@@ -14,13 +14,13 @@ export function ResponseInfo({ response }: ResponseInfoProps) {
   if (!response) {
     return (
       <Card className="bg-white border-gray-200 shadow-sm h-full flex flex-col w-full">
-        <CardHeader className="border-b border-gray-100 pb-4 flex-shrink-0">
-          <CardTitle className="text-lg font-semibold text-gray-900">Response</CardTitle>
-          <CardDescription className="text-sm text-gray-500 mt-1">
+        <CardHeader className="border-b border-gray-100 pb-3 sm:pb-4 flex-shrink-0">
+          <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">Response</CardTitle>
+          <CardDescription className="text-xs sm:text-sm text-gray-500 mt-1">
             Response akan muncul di sini setelah request dikirim
           </CardDescription>
         </CardHeader>
-        <CardContent className="pt-6 flex-1 flex items-center justify-center">
+        <CardContent className="pt-4 sm:pt-6 flex-1 flex items-center justify-center">
           <div className="text-gray-400">
             <p>Belum ada response</p>
           </div>
@@ -34,40 +34,40 @@ export function ResponseInfo({ response }: ResponseInfoProps) {
 
   return (
     <Card className="bg-white border-gray-200 shadow-sm h-full flex flex-col w-full">
-      <CardHeader className="border-b border-gray-100 pb-4 flex-shrink-0">
-        <div className="flex items-center justify-between">
+      <CardHeader className="border-b border-gray-100 pb-3 sm:pb-4 flex-shrink-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
-            <CardTitle className="text-lg font-semibold text-gray-900">Response</CardTitle>
-            <CardDescription className="text-sm text-gray-500 mt-1">
+            <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">Response</CardTitle>
+            <CardDescription className="text-xs sm:text-sm text-gray-500 mt-1">
               Hasil dari request yang dikirim
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
             <Badge
               variant="outline"
-              className={`text-sm border font-medium ${getStatusColor(response.status)}`}>
+              className={`text-xs sm:text-sm border font-medium ${getStatusColor(response.status)}`}>
               {response.status} {response.statusText}
             </Badge>
             {isSuccess ? (
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
+              <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 flex-shrink-0" />
             ) : (
-              <XCircle className="h-5 w-5 text-red-600" />
+              <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-600 flex-shrink-0" />
             )}
           </div>
         </div>
       </CardHeader>
-      <CardContent className="pt-6 space-y-4 flex-1 flex flex-col min-h-0">
+      <CardContent className="pt-4 sm:pt-6 space-y-4 flex-1 flex flex-col min-h-0">
         {/* Response Info */}
-        <div className="grid grid-cols-3 gap-4 flex-shrink-0">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 flex-shrink-0">
           <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <Clock className="h-4 w-4 text-blue-600" />
+            <Clock className="h-4 w-4 text-blue-600 flex-shrink-0" />
             <div>
               <p className="text-sm font-medium text-blue-700">Time</p>
               <p className="text-xs text-blue-600">{response.time} ms</p>
             </div>
           </div>
           <div className="flex items-center gap-2 p-3 bg-purple-50 rounded-lg border border-purple-200">
-            <Database className="h-4 w-4 text-purple-600" />
+            <Database className="h-4 w-4 text-purple-600 flex-shrink-0" />
             <div>
               <p className="text-sm font-medium text-purple-700">Size</p>
               <p className="text-xs text-purple-600">

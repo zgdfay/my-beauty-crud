@@ -79,10 +79,10 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto p-6 max-w-7xl">
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-blue-600">REST Client</h1>
-          <p className="text-gray-600">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-7xl">
+        <header className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 text-blue-600">REST Client</h1>
+          <p className="text-sm sm:text-base text-gray-600">
             Test dan verifikasi REST API dengan mudah. Support semua HTTP
             methods (GET, POST, PUT, PATCH, DELETE)
           </p>
@@ -91,28 +91,28 @@ function App() {
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
-          className="space-y-6">
-          <TabsList className="mb-6 bg-gray-100 p-1">
+          className="space-y-4 sm:space-y-6">
+          <TabsList className="mb-4 sm:mb-6 bg-gray-100 p-1 w-full sm:w-auto">
             <TabsTrigger
               value="request"
-              className="px-6 py-2 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm">
+              className="flex-1 sm:flex-none px-4 sm:px-8 py-2 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm">
               Request
             </TabsTrigger>
             <TabsTrigger
               value="history"
-              className="px-6 py-2 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm">
+              className="flex-1 sm:flex-none px-4 sm:px-8 py-2 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm">
               History
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="request" className="mt-6">
-            <div className="space-y-6">
+          <TabsContent value="request" className="mt-4 sm:mt-6">
+            <div className="space-y-4 sm:space-y-6">
               {/* Request Form dan Response Info Side by Side */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-                <div className="flex">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
+                <div className="flex w-full">
                   <RequestForm onSubmit={handleSubmit} isLoading={isLoading} />
                 </div>
-                <div className="flex">
+                <div className="flex w-full">
                   <ResponseInfo response={response} />
                 </div>
               </div>
@@ -126,7 +126,7 @@ function App() {
             </div>
           </TabsContent>
 
-          <TabsContent value="history" className="mt-6">
+          <TabsContent value="history" className="mt-4 sm:mt-6">
             <HistoryPanel
               history={history}
               onSelect={handleSelectHistory}

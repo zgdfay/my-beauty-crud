@@ -113,19 +113,19 @@ export function RequestForm({ onSubmit, isLoading }: RequestFormProps) {
 
   return (
     <Card className="bg-white border-gray-200 shadow-sm h-full flex flex-col w-full">
-      <CardHeader className="border-b border-gray-100 pb-4 flex-shrink-0">
-        <CardTitle className="text-lg font-semibold text-gray-900">
+      <CardHeader className="border-b border-gray-100 pb-3 sm:pb-4 flex-shrink-0">
+        <CardTitle className="text-base sm:text-lg font-semibold text-gray-900">
           Request Configuration
         </CardTitle>
-        <CardDescription className="text-sm text-gray-500 mt-1">
+        <CardDescription className="text-xs sm:text-sm text-gray-500 mt-1">
           Konfigurasi request untuk REST API
         </CardDescription>
       </CardHeader>
-      <CardContent className="pt-6 flex-1 flex flex-col">
-        <form onSubmit={handleSubmit} className="space-y-6 flex-1 flex flex-col">
+      <CardContent className="pt-4 sm:pt-6 flex-1 flex flex-col">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 flex-1 flex flex-col">
           {/* URL & Method */}
-          <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-3 space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+            <div className="sm:col-span-3 space-y-2">
               <Label htmlFor="method" className="text-sm font-medium">
                 Method
               </Label>
@@ -146,7 +146,7 @@ export function RequestForm({ onSubmit, isLoading }: RequestFormProps) {
                 </SelectContent>
               </Select>
             </div>
-            <div className="col-span-9 space-y-2">
+            <div className="sm:col-span-9 space-y-2">
               <Label htmlFor="url" className="text-sm font-medium">
                 URL
               </Label>
@@ -170,7 +170,7 @@ export function RequestForm({ onSubmit, isLoading }: RequestFormProps) {
 
           {/* Headers */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
               <Label className="text-sm font-medium text-gray-700">
                 Headers
               </Label>
@@ -179,15 +179,15 @@ export function RequestForm({ onSubmit, isLoading }: RequestFormProps) {
                 variant="outline"
                 size="sm"
                 onClick={addHeader}
-                className="h-8 border-gray-300 bg-white hover:bg-gray-50 text-gray-700">
+                className="h-8 border-gray-300 bg-white hover:bg-gray-50 text-gray-700 w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-1.5" />
                 Add Header
               </Button>
             </div>
             <div className="space-y-2.5">
               {headers.map((header, index) => (
-                <div key={index} className="grid grid-cols-12 gap-2.5">
-                  <div className="col-span-5">
+                <div key={index} className="grid grid-cols-12 gap-2 sm:gap-2.5">
+                  <div className="col-span-12 sm:col-span-5">
                     <Input
                       placeholder="Header name"
                       value={header.key}
@@ -197,7 +197,7 @@ export function RequestForm({ onSubmit, isLoading }: RequestFormProps) {
                       className="h-9 bg-white border-gray-300 text-gray-900 focus-visible:border-primary focus-visible:ring-primary/20"
                     />
                   </div>
-                  <div className="col-span-6">
+                  <div className="col-span-10 sm:col-span-6">
                     <Input
                       placeholder="Header value"
                       value={header.value}
@@ -207,7 +207,7 @@ export function RequestForm({ onSubmit, isLoading }: RequestFormProps) {
                       className="h-9 bg-white border-gray-300 text-gray-900 focus-visible:border-primary focus-visible:ring-primary/20"
                     />
                   </div>
-                  <div className="col-span-1 flex items-center">
+                  <div className="col-span-2 sm:col-span-1 flex items-center justify-end sm:justify-start">
                     <Button
                       type="button"
                       variant="ghost"

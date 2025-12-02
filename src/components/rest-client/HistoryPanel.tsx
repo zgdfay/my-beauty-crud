@@ -18,16 +18,16 @@ export function HistoryPanel({ history, onSelect, onDelete, onClear }: HistoryPa
   if (history.length === 0) {
     return (
       <Card className="bg-white border-gray-200 shadow-sm">
-        <CardHeader className="border-b border-gray-100 pb-4">
-          <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+        <CardHeader className="border-b border-gray-100 pb-3 sm:pb-4">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg font-semibold text-gray-900">
             <History className="h-5 w-5" />
             History
           </CardTitle>
-          <CardDescription className="text-sm text-gray-500 mt-1">
+          <CardDescription className="text-xs sm:text-sm text-gray-500 mt-1">
             Riwayat request yang pernah dikirim
           </CardDescription>
         </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent className="pt-4 sm:pt-6">
           <div className="flex items-center justify-center h-32 text-gray-400">
             <p>Belum ada history</p>
           </div>
@@ -38,14 +38,14 @@ export function HistoryPanel({ history, onSelect, onDelete, onClear }: HistoryPa
 
   return (
     <Card className="bg-white border-gray-200 shadow-sm">
-      <CardHeader className="border-b border-gray-100 pb-4">
-        <div className="flex items-center justify-between">
+      <CardHeader className="border-b border-gray-100 pb-3 sm:pb-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
-            <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg font-semibold text-gray-900">
               <History className="h-5 w-5" />
               History
             </CardTitle>
-            <CardDescription className="text-sm text-gray-500 mt-1">
+            <CardDescription className="text-xs sm:text-sm text-gray-500 mt-1">
               {history.length} request tersimpan
             </CardDescription>
           </div>
@@ -53,14 +53,14 @@ export function HistoryPanel({ history, onSelect, onDelete, onClear }: HistoryPa
             variant="outline" 
             size="sm" 
             onClick={onClear}
-            className="border-gray-300 bg-white hover:bg-gray-50 text-gray-700">
+            className="border-gray-300 bg-white hover:bg-gray-50 text-gray-700 w-full sm:w-auto">
             <Trash2 className="h-4 w-4 mr-1" />
             Clear
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="pt-6">
-        <ScrollArea className="h-[400px]">
+      <CardContent className="pt-4 sm:pt-6">
+        <ScrollArea className="h-[300px] sm:h-[400px]">
           <div className="space-y-2">
             {history.map((item) => (
               <div
@@ -68,19 +68,19 @@ export function HistoryPanel({ history, onSelect, onDelete, onClear }: HistoryPa
                 className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors cursor-pointer bg-white"
                 onClick={() => onSelect(item)}
               >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className={`border ${getMethodColor(item.config.method)} font-medium`}>
+                <div className="flex items-start justify-between mb-2 gap-2">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <Badge variant="outline" className={`border ${getMethodColor(item.config.method)} font-medium flex-shrink-0`}>
                       {item.config.method}
                     </Badge>
-                    <span className="text-sm font-medium truncate flex-1 text-gray-900">
+                    <span className="text-sm font-medium truncate text-gray-900">
                       {item.name || item.config.url}
                     </span>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 text-gray-400 hover:text-red-600 hover:bg-red-50"
+                    className="h-6 w-6 text-gray-400 hover:text-red-600 hover:bg-red-50 flex-shrink-0"
                     onClick={(e) => {
                       e.stopPropagation();
                       onDelete(item.id);

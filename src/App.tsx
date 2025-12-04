@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RequestForm } from '@/components/rest-client/RequestForm';
+import { ProductForm } from '@/components/rest-client/ProductForm';
+import { TransaksiForm } from '@/components/rest-client/TransaksiForm';
 import { ResponseInfo } from '@/components/rest-client/ResponseInfo';
 import { ResponseBody } from '@/components/rest-client/ResponseBody';
 import { HistoryPanel } from '@/components/rest-client/HistoryPanel';
@@ -79,6 +81,12 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <style>{`
+        [data-state="active"][data-slot="tabs-trigger"] {
+          background-color: rgb(219 234 254) !important;
+          color: rgb(29 78 216) !important;
+        }
+      `}</style>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-7xl">
         <header className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 text-blue-600">REST Client</h1>
@@ -92,15 +100,25 @@ function App() {
           value={activeTab}
           onValueChange={setActiveTab}
           className="space-y-4 sm:space-y-6">
-          <TabsList className="mb-4 sm:mb-6 bg-gray-100 p-1 w-full sm:w-auto">
+          <TabsList className="mb-4 sm:mb-6 bg-transparent p-0 gap-2 w-full sm:w-auto border-0 shadow-none">
             <TabsTrigger
               value="request"
-              className="flex-1 sm:flex-none px-4 sm:px-8 py-2 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm">
+              className="flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-md transition-colors data-[state=active]:!bg-blue-100 data-[state=active]:!text-blue-700 data-[state=active]:shadow-sm hover:bg-gray-50">
               Request
             </TabsTrigger>
             <TabsTrigger
+              value="produk"
+              className="flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-md transition-colors data-[state=active]:!bg-blue-100 data-[state=active]:!text-blue-700 data-[state=active]:shadow-sm hover:bg-gray-50">
+              Form Produk
+            </TabsTrigger>
+            <TabsTrigger
+              value="transaksi"
+              className="flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-md transition-colors data-[state=active]:!bg-blue-100 data-[state=active]:!text-blue-700 data-[state=active]:shadow-sm hover:bg-gray-50">
+              Form Transaksi
+            </TabsTrigger>
+            <TabsTrigger
               value="history"
-              className="flex-1 sm:flex-none px-4 sm:px-8 py-2 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm">
+              className="flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-md transition-colors data-[state=active]:!bg-blue-100 data-[state=active]:!text-blue-700 data-[state=active]:shadow-sm hover:bg-gray-50">
               History
             </TabsTrigger>
           </TabsList>
@@ -111,6 +129,48 @@ function App() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
                 <div className="flex w-full">
                   <RequestForm onSubmit={handleSubmit} isLoading={isLoading} />
+                </div>
+                <div className="flex w-full">
+                  <ResponseInfo response={response} />
+                </div>
+              </div>
+
+              {/* Response Body Full Width */}
+              {response && (
+                <div>
+                  <ResponseBody response={response} />
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="produk" className="mt-4 sm:mt-6">
+            <div className="space-y-4 sm:space-y-6">
+              {/* Product Form dan Response Info Side by Side */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
+                <div className="flex w-full">
+                  <ProductForm onSubmit={handleSubmit} isLoading={isLoading} response={response} />
+                </div>
+                <div className="flex w-full">
+                  <ResponseInfo response={response} />
+                </div>
+              </div>
+
+              {/* Response Body Full Width */}
+              {response && (
+                <div>
+                  <ResponseBody response={response} />
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="transaksi" className="mt-4 sm:mt-6">
+            <div className="space-y-4 sm:space-y-6">
+              {/* Transaksi Form dan Response Info Side by Side */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
+                <div className="flex w-full">
+                  <TransaksiForm onSubmit={handleSubmit} isLoading={isLoading} response={response} />
                 </div>
                 <div className="flex w-full">
                   <ResponseInfo response={response} />

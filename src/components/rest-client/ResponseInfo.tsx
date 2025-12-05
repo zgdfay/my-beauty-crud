@@ -2,9 +2,35 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle2, XCircle, Clock, Database } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, Database, AlertCircle } from 'lucide-react';
 import type { ApiResponse } from '@/types';
 import { getStatusColor } from '@/utils/colors';
+
+// Helper function untuk extract error message dari response
+const extractErrorMessage = (data: any): string | null => {
+  if (!data || typeof data !== 'object') {
+    return null;
+  }
+
+  // Cek berbagai format error message
+  if (data.error) {
+    return typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
+  }
+  if (data.message && (data.status === 'error' || data.success === false)) {
+    return typeof data.message === 'string' ? data.message : JSON.stringify(data.message);
+  }
+  if (data.msg) {
+    return typeof data.msg === 'string' ? data.msg : JSON.stringify(data.msg);
+  }
+  if (data.errors && Array.isArray(data.errors)) {
+    return data.errors.join(', ');
+  }
+  if (data.errors && typeof data.errors === 'object') {
+    return JSON.stringify(data.errors);
+  }
+
+  return null;
+};
 
 interface ResponseInfoProps {
   response: ApiResponse | null;
@@ -31,6 +57,7 @@ export function ResponseInfo({ response }: ResponseInfoProps) {
 
   const isSuccess = response.status >= 200 && response.status < 300;
   const isError = response.status >= 400 || response.status === 0;
+  const errorMessage = extractErrorMessage(response.data);
 
   return (
     <Card className="bg-white border-gray-200 shadow-sm h-full flex flex-col w-full">
@@ -84,6 +111,19 @@ export function ResponseInfo({ response }: ResponseInfoProps) {
         </div>
 
         <Separator className="bg-gray-200 flex-shrink-0" />
+
+        {/* Error Message Alert */}
+        {isError && errorMessage && (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex-shrink-0">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h4 className="text-sm font-semibold text-red-900 mb-1">Error Message</h4>
+                <p className="text-sm text-red-800 break-words">{errorMessage}</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Headers */}
         <div className="flex-1 flex flex-col min-h-0">

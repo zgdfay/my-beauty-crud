@@ -1,8 +1,20 @@
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { History, Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { History, Trash2, AlertTriangle } from 'lucide-react';
 import type { RequestHistory } from '@/types';
 import { format } from 'date-fns';
 import { getMethodColor, getStatusColor } from '@/utils/colors';
@@ -15,6 +27,8 @@ interface HistoryPanelProps {
 }
 
 export function HistoryPanel({ history, onSelect, onDelete, onClear }: HistoryPanelProps) {
+  const [openClearDialog, setOpenClearDialog] = useState(false);
+
   if (history.length === 0) {
     return (
       <Card className="bg-white border-gray-200 shadow-sm">
@@ -49,14 +63,50 @@ export function HistoryPanel({ history, onSelect, onDelete, onClear }: HistoryPa
               {history.length} request tersimpan
             </CardDescription>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={onClear}
-            className="border-gray-300 bg-white hover:bg-gray-50 text-gray-700 w-full sm:w-auto">
-            <Trash2 className="h-4 w-4 mr-1" />
-            Clear
-          </Button>
+          <AlertDialog open={openClearDialog} onOpenChange={setOpenClearDialog}>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="border-red-200 bg-red-50 hover:bg-red-100 text-red-700 hover:text-red-800 w-full sm:w-auto">
+                <Trash2 className="h-4 w-4 mr-1" />
+                Clear
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <div className="flex items-start gap-3 mb-2">
+                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mt-0.5">
+                    <AlertTriangle className="h-5 w-5 text-red-600" />
+                  </div>
+                  <div className="flex-1">
+                    <AlertDialogTitle className="text-left text-base sm:text-lg">
+                      Hapus Semua History?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-left text-sm text-gray-600 mt-2">
+                      Apakah Anda yakin ingin menghapus semua history? Tindakan ini tidak dapat dibatalkan.
+                      <span className="font-medium text-gray-900 mt-1 block">
+                        {history.length} request akan dihapus.
+                      </span>
+                    </AlertDialogDescription>
+                  </div>
+                </div>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="w-full sm:w-auto m-0">
+                  Batal
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    onClear();
+                    setOpenClearDialog(false);
+                  }}
+                  className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white">
+                  Ya, Hapus Semua
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </CardHeader>
       <CardContent className="pt-4 sm:pt-6">

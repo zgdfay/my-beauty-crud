@@ -45,6 +45,7 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isDataLoaded, setIsDataLoaded] = useState<boolean>(false);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(false);
+  const [loadDataError, setLoadDataError] = useState<string>('');
   const lastResponseRef = useRef<ApiResponse | null>(null);
   const lastResponseTimestampRef = useRef<number>(0);
   const lastRequestIdRef = useRef<string>('');
@@ -90,6 +91,14 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
       lastResponseTimestampRef.current = response.time || Date.now();
       isLoadDataRequestRef.current = false;
       setIsLoadingData(false);
+      setLoadDataError(''); // Reset error
+
+      // Cek jika response adalah error (404, 500, dll)
+      if (response.status === 404 || response.status >= 500 || response.status === 0) {
+        setLoadDataError('Data tidak ada atau tidak berhasil dimuat');
+        setIsDataLoaded(false);
+        return;
+      }
 
       // Coba extract data dari response - handle berbagai struktur
       let responseData = response.data;
@@ -109,6 +118,8 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
       // Jika response adalah array, cari item dengan ID yang sesuai
       if (Array.isArray(responseData)) {
         if (responseData.length === 0) {
+          setLoadDataError('Data tidak ada atau tidak berhasil dimuat');
+          setIsDataLoaded(false);
           setIsLoadingData(false);
           return;
         }
@@ -125,12 +136,16 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
           } else if (responseData.length === 1) {
             responseData = responseData[0];
           } else {
+            setLoadDataError('Data tidak ada atau tidak berhasil dimuat');
+            setIsDataLoaded(false);
             setIsLoadingData(false);
             return;
           }
         } else if (responseData.length === 1) {
           responseData = responseData[0];
         } else {
+          setLoadDataError('Data tidak ada atau tidak berhasil dimuat');
+          setIsDataLoaded(false);
           setIsLoadingData(false);
           return;
         }
@@ -155,7 +170,15 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
           total_harga: String(extractedData.total_harga || ''),
           }));
           setIsDataLoaded(true);
+          setLoadDataError(''); // Clear error jika berhasil
+        } else {
+          setLoadDataError('Data tidak ada atau tidak berhasil dimuat');
+          setIsDataLoaded(false);
         }
+      } else {
+        // Data tidak valid atau null
+        setLoadDataError('Data tidak ada atau tidak berhasil dimuat');
+        setIsDataLoaded(false);
       }
       setIsLoadingData(false);
       return;
@@ -266,6 +289,8 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
       isLoadDataRequestRef.current = false;
       lastResponseRef.current = response;
       lastResponseTimestampRef.current = response.time || Date.now();
+      setLoadDataError('Data tidak ada atau tidak berhasil dimuat');
+      setIsDataLoaded(false);
     }
   }, [response, method, transaksiData.id]);
 
@@ -431,6 +456,7 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
     // Reset data loaded flag jika ID diubah untuk PUT/PATCH
     if ((field === 'id') && (method === 'PUT' || method === 'PATCH')) {
       setIsDataLoaded(false);
+      setLoadDataError(''); // Clear error ketika ID diubah
     }
   };
 
@@ -449,6 +475,7 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
     lastRequestIdRef.current = transaksiData.id.trim();
     setIsLoadingData(true);
     setIsDataLoaded(false); // Reset flag data loaded
+    setLoadDataError(''); // Reset error message
     // Load data dengan GET request
     const loadUrl = `${BASE_URL}?id=${encodeURIComponent(transaksiData.id.trim())}`;
     onSubmit({
@@ -477,6 +504,42 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
     });
     setErrors({});
     setIsDataLoaded(false);
+    setLoadDataError('');
+  };
+
+  // Cek apakah form sudah lengkap untuk enable/disable button
+  const isFormComplete = (): boolean => {
+    // GET tidak perlu validasi
+    if (method === 'GET') {
+      return true;
+    }
+
+    // DELETE hanya perlu ID
+    if (method === 'DELETE') {
+      return transaksiData.id.trim() !== '';
+    }
+
+    // POST perlu product_id dan qty (total_harga otomatis)
+    if (method === 'POST') {
+      return (
+        transaksiData.product_id.trim() !== '' &&
+        transaksiData.qty.trim() !== ''
+      );
+    }
+
+    // PUT/PATCH perlu ID, data sudah di-load, dan semua field diisi
+    if (method === 'PUT' || method === 'PATCH') {
+      return (
+        transaksiData.id.trim() !== '' &&
+        isDataLoaded &&
+        !loadDataError &&
+        transaksiData.product_id.trim() !== '' &&
+        transaksiData.qty.trim() !== '' &&
+        transaksiData.total_harga.trim() !== ''
+      );
+    }
+
+    return false;
   };
 
   return (
@@ -531,7 +594,7 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
                   </p>
                 </div>
               )}
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Input
                   id="id"
                   type="text"
@@ -539,7 +602,7 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
                   value={transaksiData.id}
                   onChange={(e) => handleInputChange('id', e.target.value)}
                   onKeyDown={handleIdKeyDown}
-                  className={`h-10 bg-white border-gray-300 text-gray-900 flex-1 ${
+                  className={`h-10 bg-white border-gray-300 text-gray-900 w-full sm:flex-1 ${
                     errors.id
                       ? 'border-red-500 focus-visible:ring-red-500/20'
                       : 'focus-visible:border-primary focus-visible:ring-primary/20'
@@ -549,7 +612,7 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
                   <Button
                     type="button"
                     onClick={handleLoadData}
-                    className="h-10 bg-blue-600 text-white hover:bg-blue-700 whitespace-nowrap px-4 font-medium"
+                    className="h-10 w-full sm:w-auto bg-blue-600 text-white hover:bg-blue-700 whitespace-nowrap px-4 font-medium"
                     disabled={isLoading || isLoadingData || !transaksiData.id.trim()}>
                     {isLoadingData ? 'Loading...' : 'Load Data'}
                   </Button>
@@ -558,14 +621,21 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
               {errors.id && (
                 <p className="text-xs text-red-600 mt-1.5">{errors.id}</p>
               )}
-              {(method === 'PUT' || method === 'PATCH') && isDataLoaded && (
+              {(method === 'PUT' || method === 'PATCH') && loadDataError && (
+                <div className="p-2 bg-red-50 border border-red-200 rounded-md">
+                  <p className="text-xs text-red-800 font-medium">
+                    ⚠ {loadDataError}
+                  </p>
+                </div>
+              )}
+              {(method === 'PUT' || method === 'PATCH') && isDataLoaded && !loadDataError && (
                 <div className="p-2 bg-green-50 border border-green-200 rounded-md">
                   <p className="text-xs text-green-800 font-medium">
                     ✓ Data berhasil dimuat! Silakan edit data di bawah ini.
                   </p>
                 </div>
               )}
-              {(method === 'PUT' || method === 'PATCH') && !isDataLoaded && transaksiData.id.trim() && (
+              {(method === 'PUT' || method === 'PATCH') && !isDataLoaded && !loadDataError && transaksiData.id.trim() && (
                 <p className="text-xs text-gray-500 mt-1">
                   Tekan Enter di field ID atau klik "Load Data" untuk memuat data transaksi
                 </p>
@@ -667,20 +737,20 @@ export function TransaksiForm({ onSubmit, isLoading, response }: TransaksiFormPr
           </div>
 
           {/* Action Buttons */}
-          <div className="pt-2 mt-auto flex gap-3">
+          <div className="pt-2 mt-auto flex flex-col sm:flex-row gap-3">
             <Button
               type="button"
               variant="outline"
               onClick={handleReset}
-              className="flex-1 h-11 border-gray-300 bg-white hover:bg-gray-50 text-gray-700"
+              className="w-full sm:flex-1 h-11 border-gray-300 bg-white hover:bg-gray-50 text-gray-700"
               disabled={isLoading}>
               <RefreshCw className="h-4 w-4 mr-2" />
               Reset
             </Button>
             <Button
               type="submit"
-              className="flex-1 h-11 bg-blue-600 text-white hover:bg-blue-700 shadow-md font-medium transition-colors"
-              disabled={isLoading}>
+              className="w-full sm:flex-1 h-11 bg-blue-600 text-white hover:bg-blue-700 shadow-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading || !isFormComplete()}>
               <Send className="h-4 w-4 mr-2" />
               {isLoading ? 'Mengirim...' : 'Kirim Request'}
             </Button>

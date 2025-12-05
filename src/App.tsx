@@ -74,9 +74,7 @@ function App() {
   };
 
   const handleClearHistory = () => {
-    if (confirm('Apakah Anda yakin ingin menghapus semua history?')) {
-      setHistory([]);
-    }
+    setHistory([]);
   };
 
   return (
@@ -88,7 +86,7 @@ function App() {
         }
       `}</style>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-7xl">
-        <header className="mb-6 sm:mb-8">
+        <header className="pt-6 sm:pt-8 lg:pt-10 mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 text-blue-600">REST Client</h1>
           <p className="text-sm sm:text-base text-gray-600">
             Test dan verifikasi REST API dengan mudah. Support semua HTTP
@@ -100,28 +98,30 @@ function App() {
           value={activeTab}
           onValueChange={setActiveTab}
           className="space-y-4 sm:space-y-6">
-          <TabsList className="mb-4 sm:mb-6 bg-transparent p-0 gap-2 w-full sm:w-auto border-0 shadow-none">
-            <TabsTrigger
-              value="request"
-              className="flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-md transition-colors data-[state=active]:!bg-blue-100 data-[state=active]:!text-blue-700 data-[state=active]:shadow-sm hover:bg-gray-50">
-              Request
-            </TabsTrigger>
-            <TabsTrigger
-              value="produk"
-              className="flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-md transition-colors data-[state=active]:!bg-blue-100 data-[state=active]:!text-blue-700 data-[state=active]:shadow-sm hover:bg-gray-50">
-              Form Produk
-            </TabsTrigger>
-            <TabsTrigger
-              value="transaksi"
-              className="flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-md transition-colors data-[state=active]:!bg-blue-100 data-[state=active]:!text-blue-700 data-[state=active]:shadow-sm hover:bg-gray-50">
-              Form Transaksi
-            </TabsTrigger>
-            <TabsTrigger
-              value="history"
-              className="flex-1 sm:flex-none px-4 sm:px-8 py-2 rounded-md transition-colors data-[state=active]:!bg-blue-100 data-[state=active]:!text-blue-700 data-[state=active]:shadow-sm hover:bg-gray-50">
-              History
-            </TabsTrigger>
-          </TabsList>
+          <div className="mb-4 sm:mb-6 w-full overflow-x-auto">
+            <TabsList className="bg-transparent p-0 gap-2 w-max min-w-full sm:min-w-0 border-0 shadow-none inline-flex">
+              <TabsTrigger
+                value="request"
+                className="flex-shrink-0 px-4 sm:px-8 py-2 rounded-md transition-colors data-[state=active]:!bg-blue-100 data-[state=active]:!text-blue-700 data-[state=active]:shadow-sm hover:bg-gray-50 whitespace-nowrap">
+                Request
+              </TabsTrigger>
+              <TabsTrigger
+                value="produk"
+                className="flex-shrink-0 px-4 sm:px-8 py-2 rounded-md transition-colors data-[state=active]:!bg-blue-100 data-[state=active]:!text-blue-700 data-[state=active]:shadow-sm hover:bg-gray-50 whitespace-nowrap">
+                Form Produk
+              </TabsTrigger>
+              <TabsTrigger
+                value="transaksi"
+                className="flex-shrink-0 px-4 sm:px-8 py-2 rounded-md transition-colors data-[state=active]:!bg-blue-100 data-[state=active]:!text-blue-700 data-[state=active]:shadow-sm hover:bg-gray-50 whitespace-nowrap">
+                Form Transaksi
+              </TabsTrigger>
+              <TabsTrigger
+                value="history"
+                className="flex-shrink-0 px-4 sm:px-8 py-2 rounded-md transition-colors data-[state=active]:!bg-blue-100 data-[state=active]:!text-blue-700 data-[state=active]:shadow-sm hover:bg-gray-50 whitespace-nowrap">
+                History
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="request" className="mt-4 sm:mt-6">
             <div className="space-y-4 sm:space-y-6">

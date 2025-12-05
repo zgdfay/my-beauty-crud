@@ -93,6 +93,25 @@ export function RequestForm({ onSubmit, isLoading }: RequestFormProps) {
     });
   };
 
+  // Cek apakah form sudah lengkap untuk enable/disable button
+  const isFormComplete = (): boolean => {
+    // URL harus diisi
+    if (!url.trim()) {
+      return false;
+    }
+
+    // Untuk POST, PUT, PATCH, body harus valid JSON jika diisi
+    if ((method === 'POST' || method === 'PUT' || method === 'PATCH') && body.trim()) {
+      try {
+        JSON.parse(body.trim());
+      } catch {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const addHeader = () => {
     setHeaders([...headers, { key: '', value: '' }]);
   };
@@ -254,8 +273,8 @@ export function RequestForm({ onSubmit, isLoading }: RequestFormProps) {
           <div className="pt-2 mt-auto">
             <Button
               type="submit"
-              className="w-full h-11 bg-blue-600 text-white hover:bg-blue-700 shadow-md font-medium transition-colors"
-              disabled={isLoading}>
+              className="w-full h-11 bg-blue-600 text-white hover:bg-blue-700 shadow-md font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading || !isFormComplete()}>
               <Send className="h-4 w-4 mr-2" />
               {isLoading ? 'Sending...' : 'Send Request'}
             </Button>

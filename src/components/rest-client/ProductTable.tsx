@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
 import {
   Card,
   CardContent,
@@ -17,23 +16,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { RefreshCw, Plus, Edit, Trash2, Loader2 } from 'lucide-react';
+import { ProductFormModal } from './ProductFormModal';
 import { makeRequest } from '@/utils/api';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
@@ -231,17 +215,9 @@ export function ProductTable({ onAddHistory }: ProductTableProps = {}) {
         setIsDialogOpen(false);
         resetForm();
         loadProducts();
-        toast.success('Produk berhasil ditambahkan', {
-          description: (
-            <pre className="mt-2 w-full rounded-md bg-transparent p-2 text-xs overflow-auto max-h-40 whitespace-pre-wrap break-words">
-              {JSON.stringify(response.data, null, 2)}
-            </pre>
-          ),
-        });
+        toast.success('Produk berhasil ditambahkan');
       } else {
-        toast.error('Gagal menambahkan produk', {
-          description: `Status: ${response.status} - ${response.statusText}`,
-        });
+        toast.error('Gagal menambahkan produk');
       }
     } catch (error) {
       console.error('Error creating product:', error);
@@ -283,17 +259,9 @@ export function ProductTable({ onAddHistory }: ProductTableProps = {}) {
         setEditingProduct(null);
         resetForm();
         loadProducts();
-        toast.success('Produk berhasil diupdate', {
-          description: (
-            <pre className="mt-2 w-full rounded-md bg-transparent p-2 text-xs overflow-auto max-h-40 whitespace-pre-wrap break-words">
-              {JSON.stringify(response.data, null, 2)}
-            </pre>
-          ),
-        });
+        toast.success('Produk berhasil diupdate');
       } else {
-        toast.error('Gagal mengupdate produk', {
-          description: `Status: ${response.status} - ${response.statusText}`,
-        });
+        toast.error('Gagal mengupdate produk');
       }
     } catch (error) {
       console.error('Error updating product:', error);
@@ -327,17 +295,9 @@ export function ProductTable({ onAddHistory }: ProductTableProps = {}) {
         setIsDeleteDialogOpen(false);
         setDeleteProductId('');
         loadProducts();
-        toast.success('Produk berhasil dihapus', {
-          description: (
-            <pre className="mt-2 w-full rounded-md bg-transparent p-2 text-xs overflow-auto max-h-40 whitespace-pre-wrap break-words">
-              {JSON.stringify(response.data, null, 2)}
-            </pre>
-          ),
-        });
+        toast.success('Produk berhasil dihapus');
       } else {
-        toast.error('Gagal menghapus produk', {
-          description: `Status: ${response.status} - ${response.statusText}`,
-        });
+        toast.error('Gagal menghapus produk');
       }
     } catch (error) {
       console.error('Error deleting product:', error);
@@ -445,7 +405,7 @@ export function ProductTable({ onAddHistory }: ProductTableProps = {}) {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
                       ID
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
@@ -454,10 +414,10 @@ export function ProductTable({ onAddHistory }: ProductTableProps = {}) {
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
                       Kategori
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
                       Harga
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
                       Stok
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
@@ -473,7 +433,7 @@ export function ProductTable({ onAddHistory }: ProductTableProps = {}) {
                     <tr
                       key={product.id}
                       className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900 text-center">
                         {product.id}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-900">
@@ -482,14 +442,14 @@ export function ProductTable({ onAddHistory }: ProductTableProps = {}) {
                       <td className="px-4 py-3 text-sm text-gray-900">
                         {product.kategori}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900 text-center">
                         {typeof product.harga === 'number'
                           ? `Rp ${product.harga.toLocaleString('id-ID')}`
                           : `Rp ${Number(product.harga).toLocaleString(
                               'id-ID'
                             )}`}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900 text-center">
                         {product.stok}
                       </td>
                       <td
@@ -600,157 +560,25 @@ export function ProductTable({ onAddHistory }: ProductTableProps = {}) {
         )}
 
         {/* Create/Edit Dialog */}
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
-            <DialogHeader>
-              <DialogTitle>
-                {editingProduct ? 'Edit Produk' : 'Tambah Produk Baru'}
-              </DialogTitle>
-              <DialogDescription>
-                {editingProduct
-                  ? 'Ubah informasi produk di bawah ini'
-                  : 'Isi form di bawah ini untuk menambahkan produk baru'}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="nama_produk">
-                  Nama Produk <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="nama_produk"
-                  value={formData.nama_produk}
-                  onChange={(e) => {
-                    setFormData({ ...formData, nama_produk: e.target.value });
-                    if (errors.nama_produk)
-                      setErrors({ ...errors, nama_produk: '' });
-                  }}
-                  className={errors.nama_produk ? 'border-red-500' : ''}
-                />
-                {errors.nama_produk && (
-                  <p className="text-xs text-red-600">{errors.nama_produk}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="kategori">
-                  Kategori <span className="text-red-500">*</span>
-                </Label>
-                <Select
-                  value={formData.kategori}
-                  onValueChange={(value) => {
-                    setFormData({ ...formData, kategori: value });
-                    if (errors.kategori) setErrors({ ...errors, kategori: '' });
-                  }}>
-                  <SelectTrigger
-                    id="kategori"
-                    className={`w-full${
-                      errors.kategori ? ' border-red-500' : ''
-                    }`}>
-                    <SelectValue placeholder="Pilih kategori" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {KATEGORI_OPTIONS.map((kategori) => (
-                      <SelectItem key={kategori} value={kategori}>
-                        {kategori}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.kategori && (
-                  <p className="text-xs text-red-600">{errors.kategori}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="harga">
-                  Harga <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="harga"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={formData.harga}
-                  onChange={(e) => {
-                    setFormData({ ...formData, harga: e.target.value });
-                    if (errors.harga) setErrors({ ...errors, harga: '' });
-                  }}
-                  className={errors.harga ? 'border-red-500' : ''}
-                />
-                {errors.harga && (
-                  <p className="text-xs text-red-600">{errors.harga}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="stok">
-                  Stok <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="stok"
-                  type="number"
-                  min="0"
-                  value={formData.stok}
-                  onChange={(e) => {
-                    setFormData({ ...formData, stok: e.target.value });
-                    if (errors.stok) setErrors({ ...errors, stok: '' });
-                  }}
-                  className={errors.stok ? 'border-red-500' : ''}
-                />
-                {errors.stok && (
-                  <p className="text-xs text-red-600">{errors.stok}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="deskripsi">
-                  Deskripsi <span className="text-red-500">*</span>
-                </Label>
-                <Textarea
-                  id="deskripsi"
-                  value={formData.deskripsi}
-                  onChange={(e) => {
-                    setFormData({ ...formData, deskripsi: e.target.value });
-                    if (errors.deskripsi)
-                      setErrors({ ...errors, deskripsi: '' });
-                  }}
-                  className={errors.deskripsi ? 'border-red-500' : ''}
-                  rows={4}
-                />
-                {errors.deskripsi && (
-                  <p className="text-xs text-red-600">{errors.deskripsi}</p>
-                )}
-              </div>
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setIsDialogOpen(false);
-                  resetForm();
-                }}
-                disabled={isLoading}>
-                Batal
-              </Button>
-              <Button
-                onClick={editingProduct ? handleUpdate : handleCreate}
-                disabled={isLoading}
-                className="bg-blue-600 text-white hover:bg-blue-700">
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Menyimpan...
-                  </>
-                ) : editingProduct ? (
-                  'Update'
-                ) : (
-                  'Simpan'
-                )}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <ProductFormModal
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          formData={formData}
+          errors={errors}
+          isLoading={isLoading}
+          editingProduct={editingProduct}
+          onFormDataChange={(field, value) => {
+            setFormData({ ...formData, [field]: value });
+            if (errors[field]) {
+              setErrors({ ...errors, [field]: '' });
+            }
+          }}
+          onSubmit={editingProduct ? handleUpdate : handleCreate}
+          onCancel={() => {
+            setIsDialogOpen(false);
+            resetForm();
+          }}
+        />
 
         {/* Delete Dialog */}
         <AlertDialog

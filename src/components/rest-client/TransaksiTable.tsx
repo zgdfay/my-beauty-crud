@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-
-import { Input } from '@/components/ui/input';
 import {
   Card,
   CardContent,
@@ -25,8 +23,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
 import { RefreshCw, Plus, Edit, Trash2, Loader2, Eye } from 'lucide-react';
+import { TransaksiFormModal } from './TransaksiFormModal';
 import { makeRequest } from '@/utils/api';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
@@ -62,8 +60,18 @@ interface TransaksiTableProps {
   onAddHistory?: (config: RequestConfig, response: ApiResponse) => void;
 }
 
+interface Product {
+  id: string;
+  nama_produk: string;
+  kategori: string;
+  harga: number | string;
+  stok: number | string;
+  deskripsi: string;
+}
+
 export function TransaksiTable({ onAddHistory }: TransaksiTableProps = {}) {
   const [transaksis, setTransaksis] = useState<Transaksi[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
@@ -96,9 +104,41 @@ export function TransaksiTable({ onAddHistory }: TransaksiTableProps = {}) {
     setCurrentPage(1);
   }, [transaksis.length]);
 
+  // Load products
+  const loadProducts = async () => {
+    try {
+      const response = await makeRequest({
+        url: PRODUCT_BASE_URL,
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.status === 200 && response.data) {
+        let data = response.data;
+
+        // Handle berbagai struktur response
+        if (Array.isArray(data)) {
+          setProducts(data);
+        } else if (data.data && Array.isArray(data.data)) {
+          setProducts(data.data);
+        } else if (data.result && Array.isArray(data.result)) {
+          setProducts(data.result);
+        } else {
+          setProducts([]);
+        }
+      } else {
+        setProducts([]);
+      }
+    } catch (error) {
+      console.error('Error loading products:', error);
+      setProducts([]);
+    }
+  };
+
   // Load data saat komponen mount
   useEffect(() => {
     loadTransaksis();
+    loadProducts();
   }, []);
 
   const loadProductName = async (productId: string | number) => {
@@ -308,56 +348,9 @@ export function TransaksiTable({ onAddHistory }: TransaksiTableProps = {}) {
         setIsDialogOpen(false);
         resetForm();
         loadTransaksis();
-
-        // Gabungkan informasi stok dalam toast transaksi
-        let description = (
-          <pre className="mt-2 w-full rounded-md bg-transparent p-2 text-xs overflow-auto max-h-40 whitespace-pre-wrap break-words">
-            {JSON.stringify(response.data, null, 2)}
-          </pre>
-        );
-
-        try {
-          const productId = Number(formData.product_id.trim());
-          const qty = Number(formData.qty.trim());
-          const productResponse = await makeRequest({
-            url: PRODUCT_BASE_URL,
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-          });
-
-          if (productResponse.status === 200 && productResponse.data) {
-            let products = productResponse.data;
-            if (!Array.isArray(products)) {
-              products = products.data || products.products || [];
-            }
-            const product = Array.isArray(products)
-              ? products.find((p: any) => String(p.id) === String(productId))
-              : null;
-
-            if (product) {
-              description = (
-                <div className="w-full max-w-full overflow-hidden">
-                  <p className="mb-2 text-sm break-words">
-                    Stok {product.nama_produk} berkurang ({qty} unit)
-                  </p>
-                  <pre className="mt-2 w-full rounded-md bg-transparent p-2 text-xs overflow-auto max-h-40 whitespace-pre-wrap break-words">
-                    {JSON.stringify(response.data, null, 2)}
-                  </pre>
-                </div>
-              );
-            }
-          }
-        } catch {
-          // Ignore error, gunakan description default
-        }
-
-        toast.success('Transaksi berhasil ditambahkan', {
-          description,
-        });
+        toast.success('Transaksi berhasil ditambahkan');
       } else {
-        toast.error('Gagal menambahkan transaksi', {
-          description: `Status: ${response.status} - ${response.statusText}`,
-        });
+        toast.error('Gagal menambahkan transaksi');
       }
     } catch (error) {
       console.error('Error creating transaksi:', error);
@@ -460,66 +453,9 @@ export function TransaksiTable({ onAddHistory }: TransaksiTableProps = {}) {
         setEditingTransaksi(null);
         resetForm();
         loadTransaksis();
-
-        // Gabungkan informasi stok dalam toast transaksi
-        let description = (
-          <pre className="mt-2 w-full rounded-md bg-transparent p-2 text-xs overflow-auto max-h-40 whitespace-pre-wrap break-words">
-            {JSON.stringify(response.data, null, 2)}
-          </pre>
-        );
-
-        try {
-          if (editingTransaksi) {
-            const productId = Number(formData.product_id.trim());
-            const newQty = Number(formData.qty.trim());
-            const oldQtyValue = Number(editingTransaksi.qty) || 0;
-            const qtyDifference = newQty - oldQtyValue;
-
-            const productResponse = await makeRequest({
-              url: PRODUCT_BASE_URL,
-              method: 'GET',
-              headers: { 'Content-Type': 'application/json' },
-            });
-
-            if (productResponse.status === 200 && productResponse.data) {
-              let products = productResponse.data;
-              if (!Array.isArray(products)) {
-                products = products.data || products.products || [];
-              }
-              const product = Array.isArray(products)
-                ? products.find((p: any) => String(p.id) === String(productId))
-                : null;
-
-              if (product && qtyDifference !== 0) {
-                const stokInfo =
-                  qtyDifference > 0
-                    ? `Stok ${product.nama_produk} berkurang ${qtyDifference} unit`
-                    : `Stok ${product.nama_produk} dikembalikan ${Math.abs(
-                        qtyDifference
-                      )} unit`;
-
-                description = (
-                  <div className="w-full max-w-full overflow-hidden">
-                    <p className="mb-2 text-sm break-words">{stokInfo}</p>
-                    <pre className="mt-2 w-full rounded-md bg-transparent p-2 text-xs overflow-auto max-h-40 whitespace-pre-wrap break-words">
-                      {JSON.stringify(response.data, null, 2)}
-                    </pre>
-                  </div>
-                );
-              }
-            }
-          }
-        } catch {
-          // Ignore error, gunakan description default
-        }
-
-        toast.success('Transaksi berhasil diupdate', {
-          description,
-        });
+        toast.success('Transaksi berhasil diupdate');
       } else {
-        toast.error('Gagal mengupdate transaksi', {
-          description: `Status: ${response.status} - ${response.statusText}`,
-        });
+        toast.error('Gagal mengupdate transaksi');
       }
     } catch (error) {
       console.error('Error updating transaksi:', error);
@@ -550,18 +486,15 @@ export function TransaksiTable({ onAddHistory }: TransaksiTableProps = {}) {
       }
 
       if (response.status === 200) {
-        // Simpan info transaksi sebelum dihapus untuk toast
-        const deletedTransaksi = transaksis.find(
-          (t) => String(t.id) === String(deleteTransaksiId)
-        );
-        let productName = '';
-        let qty = 0;
-
         // Kembalikan stok produk setelah transaksi dihapus
         try {
+          const deletedTransaksi = transaksis.find(
+            (t) => String(t.id) === String(deleteTransaksiId)
+          );
+
           if (deletedTransaksi) {
             const productId = Number(deletedTransaksi.product_id);
-            qty = Number(deletedTransaksi.qty);
+            const qty = Number(deletedTransaksi.qty);
 
             // Ambil data produk
             const productResponse = await makeRequest({
@@ -582,7 +515,6 @@ export function TransaksiTable({ onAddHistory }: TransaksiTableProps = {}) {
                 : null;
 
               if (product) {
-                productName = product.nama_produk || '';
                 const currentStok = Number(product.stok) || 0;
                 const newStok = currentStok + qty; // Kembalikan stok
 
@@ -619,34 +551,9 @@ export function TransaksiTable({ onAddHistory }: TransaksiTableProps = {}) {
         setIsDeleteDialogOpen(false);
         setDeleteTransaksiId('');
         loadTransaksis();
-
-        // Gabungkan informasi stok dalam toast transaksi
-        let description = (
-          <pre className="mt-2 w-full rounded-md bg-transparent p-2 text-xs overflow-auto max-h-40 whitespace-pre-wrap break-words">
-            {JSON.stringify(response.data, null, 2)}
-          </pre>
-        );
-
-        if (productName && qty > 0) {
-          description = (
-            <div className="w-full max-w-full overflow-hidden">
-              <p className="mb-2 text-sm break-words">
-                Stok {productName} dikembalikan (+{qty} unit)
-              </p>
-              <pre className="mt-2 w-full rounded-md bg-transparent p-2 text-xs overflow-auto max-h-40 whitespace-pre-wrap break-words">
-                {JSON.stringify(response.data, null, 2)}
-              </pre>
-            </div>
-          );
-        }
-
-        toast.success('Transaksi berhasil dihapus', {
-          description,
-        });
+        toast.success('Transaksi berhasil dihapus');
       } else {
-        toast.error('Gagal menghapus transaksi', {
-          description: `Status: ${response.status} - ${response.statusText}`,
-        });
+        toast.error('Gagal menghapus transaksi');
       }
     } catch (error) {
       console.error('Error deleting transaksi:', error);
@@ -760,16 +667,16 @@ export function TransaksiTable({ onAddHistory }: TransaksiTableProps = {}) {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
                       ID
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
                       Product ID
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
                       Quantity
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
                       Total Harga
                     </th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase min-w-[200px]">
@@ -782,16 +689,16 @@ export function TransaksiTable({ onAddHistory }: TransaksiTableProps = {}) {
                     <tr
                       key={transaksi.id}
                       className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900 text-center">
                         {transaksi.id}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900 text-center">
                         {transaksi.product_id}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900 text-center">
                         {transaksi.qty}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-gray-900 text-center">
                         {typeof transaksi.total_harga === 'number'
                           ? `Rp ${transaksi.total_harga.toLocaleString(
                               'id-ID'
@@ -913,95 +820,26 @@ export function TransaksiTable({ onAddHistory }: TransaksiTableProps = {}) {
         )}
 
         {/* Create/Edit Dialog */}
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-lg bg-white">
-            <DialogHeader>
-              <DialogTitle>
-                {editingTransaksi ? 'Edit Transaksi' : 'Tambah Transaksi Baru'}
-              </DialogTitle>
-              <DialogDescription>
-                {editingTransaksi
-                  ? 'Ubah informasi transaksi di bawah ini'
-                  : 'Isi form di bawah ini untuk menambahkan transaksi baru'}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="product_id">
-                  Product ID <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="product_id"
-                  type="number"
-                  min="0"
-                  value={formData.product_id}
-                  onChange={(e) => {
-                    setFormData({ ...formData, product_id: e.target.value });
-                    if (errors.product_id)
-                      setErrors({ ...errors, product_id: '' });
-                  }}
-                  className={errors.product_id ? 'border-red-500' : ''}
-                />
-                {errors.product_id && (
-                  <p className="text-xs text-red-600">{errors.product_id}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="qty">
-                  Quantity <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="qty"
-                  type="number"
-                  min="0"
-                  value={formData.qty}
-                  onChange={(e) => {
-                    setFormData({ ...formData, qty: e.target.value });
-                    if (errors.qty) setErrors({ ...errors, qty: '' });
-                  }}
-                  className={errors.qty ? 'border-red-500' : ''}
-                />
-                {errors.qty && (
-                  <p className="text-xs text-red-600">{errors.qty}</p>
-                )}
-              </div>
-
-              <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-                <p className="text-xs text-green-800 font-medium">
-                  💡 Total harga akan otomatis dihitung berdasarkan product_id
-                  dan qty
-                </p>
-              </div>
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setIsDialogOpen(false);
-                  resetForm();
-                }}
-                disabled={isLoading}>
-                Batal
-              </Button>
-              <Button
-                onClick={editingTransaksi ? handleUpdate : handleCreate}
-                disabled={isLoading}
-                className="bg-blue-600 text-white hover:bg-blue-700">
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Menyimpan...
-                  </>
-                ) : editingTransaksi ? (
-                  'Update'
-                ) : (
-                  'Simpan'
-                )}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <TransaksiFormModal
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          formData={formData}
+          errors={errors}
+          isLoading={isLoading}
+          editingTransaksi={editingTransaksi}
+          products={products}
+          onFormDataChange={(field, value) => {
+            setFormData({ ...formData, [field]: value });
+            if (errors[field]) {
+              setErrors({ ...errors, [field]: '' });
+            }
+          }}
+          onSubmit={editingTransaksi ? handleUpdate : handleCreate}
+          onCancel={() => {
+            setIsDialogOpen(false);
+            resetForm();
+          }}
+        />
 
         {/* Detail Dialog */}
         <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>

@@ -149,9 +149,6 @@ export function ProductTable({}: ProductTableProps = {}) {
 
     if (!formData.kategori.trim()) {
       newErrors.kategori = 'Kategori harus diisi';
-    } else if (!KATEGORI_OPTIONS.includes(formData.kategori.trim())) {
-      // Jika kategori tidak ada dalam daftar, otomatis set ke "Lainnya"
-      setFormData({ ...formData, kategori: 'Lainnya' });
     }
 
     if (!formData.harga.trim()) {

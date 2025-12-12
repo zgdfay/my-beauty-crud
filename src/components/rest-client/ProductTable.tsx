@@ -49,16 +49,11 @@ const BASE_URL =
 interface ProductTableProps {}
 
 const KATEGORI_OPTIONS = [
-  'Facial Cleanser',
-  'Toner',
-  'Serum',
-  'Moisturizer',
-  'Sunscreen',
-  'Face Mask',
-  'Eye Cream',
-  'Essence',
-  'Exfoliant',
-  'Treatment',
+  'Skincare',
+  'Makeup',
+  'Body Care',
+  'Hair Care',
+  'Accessories',
 ];
 
 export function ProductTable({}: ProductTableProps = {}) {

@@ -18,11 +18,11 @@ function App() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 max-w-7xl">
         <header className="pt-6 sm:pt-8 lg:pt-10 mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 text-blue-600">
-            REST Client
+            Master Data Produk dan Transaksi Diamond Game Online
           </h1>
           <p className="text-sm sm:text-base text-gray-600">
-            Test dan verifikasi REST API dengan mudah. Support semua HTTP
-            methods (GET, POST, PUT, PATCH, DELETE)
+            Aplikasi ini digunakan untuk mengelola data produk dan transaksi
+            diamond game online.
           </p>
         </header>
 

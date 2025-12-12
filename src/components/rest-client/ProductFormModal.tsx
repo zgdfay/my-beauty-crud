@@ -19,16 +19,13 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 const KATEGORI_OPTIONS = [
-  'Facial Cleanser',
-  'Toner',
-  'Serum',
-  'Moisturizer',
-  'Sunscreen',
-  'Face Mask',
-  'Eye Cream',
-  'Essence',
-  'Exfoliant',
-  'Treatment',
+  'Skincare',
+  'Makeup',
+  'Body Care',
+  'Hair Care',
+  'Fragrance',
+  'Bath & Body',
+  'Accessories',
   'Lainnya',
 ];
 

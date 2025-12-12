@@ -18,18 +18,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
-const KATEGORI_OPTIONS = [
-  'Facial Cleanser',
-  'Toner',
-  'Serum',
-  'Moisturizer',
-  'Sunscreen',
-  'Face Mask',
-  'Eye Cream',
-  'Essence',
-  'Exfoliant',
-  'Treatment',
-];
+const KATEGORI_OPTIONS = ['Skincare', 'Makeup', 'Body Care', 'Accessories'];
 
 interface ProductFormData {
   nama_produk: string;

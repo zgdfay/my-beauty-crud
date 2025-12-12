@@ -226,7 +226,7 @@ export function TransaksiFormModal({
           <Button
             onClick={onSubmit}
             disabled={isLoading || !isFormValid()}
-            className="bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+            className="bg-pink-600 text-white hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed">
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />

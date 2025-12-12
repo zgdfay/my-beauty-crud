@@ -49,18 +49,16 @@ const BASE_URL =
 interface ProductTableProps {}
 
 const KATEGORI_OPTIONS = [
-  'Mobile Legends: Bang Bang',
-  'Free Fire',
-  'PUBG Mobile',
-  'Genshin Impact',
-  'Roblox',
-  'Block Blast!',
-  'Stumble Guys',
-  'Honkai: Star Rail',
-  'Call of Duty Mobile',
-  'Free Fire MAX',
-  'Higgs Domino Island',
-  'Clash of Clans',
+  'Facial Cleanser',
+  'Toner',
+  'Serum',
+  'Moisturizer',
+  'Sunscreen',
+  'Face Mask',
+  'Eye Cream',
+  'Essence',
+  'Exfoliant',
+  'Treatment',
   'Lainnya',
 ];
 
@@ -152,7 +150,8 @@ export function ProductTable({}: ProductTableProps = {}) {
     if (!formData.kategori.trim()) {
       newErrors.kategori = 'Kategori harus diisi';
     } else if (!KATEGORI_OPTIONS.includes(formData.kategori.trim())) {
-      newErrors.kategori = 'Kategori harus dipilih dari daftar yang tersedia';
+      // Jika kategori tidak ada dalam daftar, otomatis set ke "Lainnya"
+      setFormData({ ...formData, kategori: 'Lainnya' });
     }
 
     if (!formData.harga.trim()) {
@@ -206,9 +205,15 @@ export function ProductTable({}: ProductTableProps = {}) {
 
     setIsLoading(true);
     try {
+      // Jika kategori tidak ada dalam daftar, otomatis set ke "Lainnya"
+      let kategori = formData.kategori.trim();
+      if (!KATEGORI_OPTIONS.includes(kategori)) {
+        kategori = 'Lainnya';
+      }
+
       const bodyData: any = {
         nama_produk: formData.nama_produk.trim(),
-        kategori: formData.kategori.trim(),
+        kategori: kategori,
         harga: Number(formData.harga.trim()),
         stok: Number(formData.stok.trim()),
         deskripsi: formData.deskripsi.trim(),
@@ -281,9 +286,15 @@ export function ProductTable({}: ProductTableProps = {}) {
 
     setIsLoading(true);
     try {
+      // Jika kategori tidak ada dalam daftar, otomatis set ke "Lainnya"
+      let kategori = formData.kategori.trim();
+      if (!KATEGORI_OPTIONS.includes(kategori)) {
+        kategori = 'Lainnya';
+      }
+
       const bodyData: any = {
         nama_produk: formData.nama_produk.trim(),
-        kategori: formData.kategori.trim(),
+        kategori: kategori,
         harga: Number(formData.harga.trim()),
         stok: Number(formData.stok.trim()),
         deskripsi: formData.deskripsi.trim(),
@@ -424,9 +435,14 @@ export function ProductTable({}: ProductTableProps = {}) {
 
   const openEditDialog = (product: Product) => {
     setEditingProduct(product);
+    // Jika kategori tidak ada dalam daftar, otomatis set ke "Lainnya"
+    let kategori = String(product.kategori || '');
+    if (kategori && !KATEGORI_OPTIONS.includes(kategori)) {
+      kategori = 'Lainnya';
+    }
     setFormData({
       nama_produk: String(product.nama_produk || ''),
-      kategori: String(product.kategori || ''),
+      kategori: kategori,
       harga: String(product.harga || ''),
       stok: String(product.stok || ''),
       deskripsi: String(product.deskripsi || ''),
@@ -480,7 +496,7 @@ export function ProductTable({}: ProductTableProps = {}) {
             <Button
               onClick={openCreateDialog}
               size="sm"
-              className="bg-blue-600 text-white hover:bg-blue-700 cursor-pointer transition-colors">
+              className="bg-pink-600 text-white hover:bg-pink-700 cursor-pointer transition-colors">
               <Plus className="h-4 w-4 mr-2" />
               Tambah Produk
             </Button>
@@ -490,7 +506,7 @@ export function ProductTable({}: ProductTableProps = {}) {
       <CardContent className="pt-0 sm:pt-0">
         {isLoading && products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-600 mb-2" />
+            <Loader2 className="h-8 w-8 animate-spin text-pink-600 mb-2" />
             <p className="text-sm text-gray-500">Memuat data produk...</p>
           </div>
         ) : products.length === 0 ? (
@@ -505,7 +521,7 @@ export function ProductTable({}: ProductTableProps = {}) {
             {isLoading && (
               <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
                 <div className="flex flex-col items-center gap-2">
-                  <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                  <Loader2 className="h-6 w-6 animate-spin text-pink-600" />
                   <p className="text-sm text-gray-600">Memuat ulang data...</p>
                 </div>
               </div>
@@ -601,7 +617,7 @@ export function ProductTable({}: ProductTableProps = {}) {
                             onClick={() => openEditDialog(product)}
                             variant="outline"
                             size="sm"
-                            className="h-8 px-3 border-blue-300 text-blue-700 hover:bg-blue-100 hover:border-blue-400 hover:text-blue-800 cursor-pointer transition-colors">
+                            className="h-8 px-3 border-pink-300 text-pink-700 hover:bg-pink-100 hover:border-pink-400 hover:text-pink-800 cursor-pointer transition-colors">
                             <Edit className="h-3 w-3 mr-1" />
                             Edit
                           </Button>

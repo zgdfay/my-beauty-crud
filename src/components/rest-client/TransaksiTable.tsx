@@ -605,7 +605,7 @@ export function TransaksiTable({}: TransaksiTableProps = {}) {
             <Button
               onClick={openCreateDialog}
               size="sm"
-              className="bg-blue-600 text-white hover:bg-blue-700 cursor-pointer transition-colors">
+              className="bg-pink-600 text-white hover:bg-pink-700 cursor-pointer transition-colors">
               <Plus className="h-4 w-4 mr-2" />
               Tambah Transaksi
             </Button>
@@ -615,7 +615,7 @@ export function TransaksiTable({}: TransaksiTableProps = {}) {
       <CardContent className="pt-0 sm:pt-0">
         {isLoading && transaksis.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-600 mb-2" />
+            <Loader2 className="h-8 w-8 animate-spin text-pink-600 mb-2" />
             <p className="text-sm text-gray-500">Memuat data transaksi...</p>
           </div>
         ) : transaksis.length === 0 ? (
@@ -630,7 +630,7 @@ export function TransaksiTable({}: TransaksiTableProps = {}) {
             {isLoading && (
               <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
                 <div className="flex flex-col items-center gap-2">
-                  <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                  <Loader2 className="h-6 w-6 animate-spin text-pink-600" />
                   <p className="text-sm text-gray-600">Memuat ulang data...</p>
                 </div>
               </div>
@@ -693,7 +693,7 @@ export function TransaksiTable({}: TransaksiTableProps = {}) {
                             onClick={() => openEditDialog(transaksi)}
                             variant="outline"
                             size="sm"
-                            className="h-8 px-3 border-blue-300 text-blue-700 hover:bg-blue-100 hover:border-blue-400 hover:text-blue-800 cursor-pointer transition-colors whitespace-nowrap">
+                            className="h-8 px-3 border-pink-300 text-pink-700 hover:bg-pink-100 hover:border-pink-400 hover:text-pink-800 cursor-pointer transition-colors whitespace-nowrap">
                             <Edit className="h-3 w-3 mr-1" />
                             Edit
                           </Button>
@@ -826,7 +826,7 @@ export function TransaksiTable({}: TransaksiTableProps = {}) {
             </DialogHeader>
             {detailTransaksi && (
               <div className="space-y-4 py-4">
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                     <div className="flex justify-between items-start mb-2">
                       <span className="text-sm font-medium text-gray-500">
@@ -849,7 +849,7 @@ export function TransaksiTable({}: TransaksiTableProps = {}) {
                     </p>
                   </div>
 
-                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 col-span-2">
                     <div className="flex justify-between items-start mb-2">
                       <span className="text-sm font-medium text-gray-500">
                         Nama Produk
@@ -901,13 +901,13 @@ export function TransaksiTable({}: TransaksiTableProps = {}) {
                     </p>
                   </div>
 
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="p-4 bg-pink-50 rounded-lg border border-pink-200 col-span-2">
                     <div className="flex justify-between items-start mb-2">
-                      <span className="text-sm font-medium text-blue-700">
+                      <span className="text-sm font-medium text-pink-700">
                         Total Harga
                       </span>
                     </div>
-                    <p className="text-2xl font-bold text-blue-900">
+                    <p className="text-2xl font-bold text-pink-900">
                       {typeof detailTransaksi.total_harga === 'number'
                         ? `Rp ${detailTransaksi.total_harga.toLocaleString(
                             'id-ID'

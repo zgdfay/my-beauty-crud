@@ -19,16 +19,17 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 const KATEGORI_OPTIONS = [
-  'Mobile Legends: Bang Bang',
-  'Free Fire',
-  'PUBG Mobile',
-  'Genshin Impact',
-  'Roblox',
-  'Stumble Guys',
-  'Honkai: Star Rail',
-  'Call of Duty Mobile',
-  'Free Fire MAX',
-  'Higgs Domino Island',
+  'Facial Cleanser',
+  'Toner',
+  'Serum',
+  'Moisturizer',
+  'Sunscreen',
+  'Face Mask',
+  'Eye Cream',
+  'Essence',
+  'Exfoliant',
+  'Treatment',
+  'Lainnya',
 ];
 
 interface ProductFormData {
@@ -66,7 +67,10 @@ interface ProductFormModalProps {
   errors: ProductFormErrors;
   isLoading: boolean;
   editingProduct: Product | null;
-  onFormDataChange: (field: keyof ProductFormData, value: string | File | null) => void;
+  onFormDataChange: (
+    field: keyof ProductFormData,
+    value: string | File | null
+  ) => void;
   onSubmit: () => void;
   onCancel: () => void;
 }
@@ -93,23 +97,20 @@ export function ProductFormModal({
     // Validasi nama produk: harus diisi dan bukan hanya angka
     const isNamaProdukValid =
       namaProduk !== '' &&
-      (isNaN(Number(namaProduk)) || namaProduk === '' || Number(namaProduk).toString() !== namaProduk);
+      (isNaN(Number(namaProduk)) ||
+        namaProduk === '' ||
+        Number(namaProduk).toString() !== namaProduk);
 
-    // Validasi kategori: harus diisi dan ada di daftar
-    const isKategoriValid =
-      kategori !== '' && KATEGORI_OPTIONS.includes(kategori);
+    // Validasi kategori: harus diisi (jika tidak ada dalam daftar, akan otomatis diset ke "Lainnya" saat submit)
+    const isKategoriValid = kategori !== '';
 
     // Validasi harga: harus diisi, angka, dan >= 0
     const isHargaValid =
-      harga !== '' &&
-      !isNaN(Number(harga)) &&
-      Number(harga) >= 0;
+      harga !== '' && !isNaN(Number(harga)) && Number(harga) >= 0;
 
     // Validasi stok: harus diisi, angka, dan >= 0
     const isStokValid =
-      stok !== '' &&
-      !isNaN(Number(stok)) &&
-      Number(stok) >= 0;
+      stok !== '' && !isNaN(Number(stok)) && Number(stok) >= 0;
 
     // Validasi deskripsi: harus diisi
     const isDeskripsiValid = deskripsi !== '';
@@ -246,9 +247,7 @@ export function ProductFormModal({
               </p>
             )}
             {editingProduct && !formData.gambar && editingProduct.gambar && (
-              <p className="text-xs text-gray-500">
-                Gambar saat ini tersedia
-              </p>
+              <p className="text-xs text-gray-500">Gambar saat ini tersedia</p>
             )}
             {errors.gambar && (
               <p className="text-xs text-red-600">{errors.gambar}</p>
@@ -262,7 +261,7 @@ export function ProductFormModal({
           <Button
             onClick={onSubmit}
             disabled={isLoading || !isFormValid()}
-            className="bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+            className="bg-pink-600 text-white hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed">
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />

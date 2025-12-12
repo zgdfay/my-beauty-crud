@@ -19,14 +19,16 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 const KATEGORI_OPTIONS = [
-  'Skincare',
-  'Makeup',
-  'Body Care',
-  'Hair Care',
-  'Fragrance',
-  'Bath & Body',
-  'Accessories',
-  'Lainnya',
+  'Facial Cleanser',
+  'Toner',
+  'Serum',
+  'Moisturizer',
+  'Sunscreen',
+  'Face Mask',
+  'Eye Cream',
+  'Essence',
+  'Exfoliant',
+  'Treatment',
 ];
 
 interface ProductFormData {
@@ -98,8 +100,9 @@ export function ProductFormModal({
         namaProduk === '' ||
         Number(namaProduk).toString() !== namaProduk);
 
-    // Validasi kategori: harus diisi (jika tidak ada dalam daftar, akan otomatis diset ke "Lainnya" saat submit)
-    const isKategoriValid = kategori !== '';
+    // Validasi kategori: harus diisi dan ada di daftar
+    const isKategoriValid =
+      kategori !== '' && KATEGORI_OPTIONS.includes(kategori);
 
     // Validasi harga: harus diisi, angka, dan >= 0
     const isHargaValid =

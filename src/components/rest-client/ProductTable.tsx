@@ -59,7 +59,6 @@ const KATEGORI_OPTIONS = [
   'Essence',
   'Exfoliant',
   'Treatment',
-  'Lainnya',
 ];
 
 export function ProductTable({}: ProductTableProps = {}) {
@@ -149,6 +148,8 @@ export function ProductTable({}: ProductTableProps = {}) {
 
     if (!formData.kategori.trim()) {
       newErrors.kategori = 'Kategori harus diisi';
+    } else if (!KATEGORI_OPTIONS.includes(formData.kategori.trim())) {
+      newErrors.kategori = 'Kategori harus dipilih dari daftar yang tersedia';
     }
 
     if (!formData.harga.trim()) {
@@ -283,15 +284,9 @@ export function ProductTable({}: ProductTableProps = {}) {
 
     setIsLoading(true);
     try {
-      // Jika kategori tidak ada dalam daftar, otomatis set ke "Lainnya"
-      let kategori = formData.kategori.trim();
-      if (!KATEGORI_OPTIONS.includes(kategori)) {
-        kategori = 'Lainnya';
-      }
-
       const bodyData: any = {
         nama_produk: formData.nama_produk.trim(),
-        kategori: kategori,
+        kategori: formData.kategori.trim(),
         harga: Number(formData.harga.trim()),
         stok: Number(formData.stok.trim()),
         deskripsi: formData.deskripsi.trim(),
@@ -432,14 +427,9 @@ export function ProductTable({}: ProductTableProps = {}) {
 
   const openEditDialog = (product: Product) => {
     setEditingProduct(product);
-    // Jika kategori tidak ada dalam daftar, otomatis set ke "Lainnya"
-    let kategori = String(product.kategori || '');
-    if (kategori && !KATEGORI_OPTIONS.includes(kategori)) {
-      kategori = 'Lainnya';
-    }
     setFormData({
       nama_produk: String(product.nama_produk || ''),
-      kategori: kategori,
+      kategori: String(product.kategori || ''),
       harga: String(product.harga || ''),
       stok: String(product.stok || ''),
       deskripsi: String(product.deskripsi || ''),
